@@ -8,11 +8,18 @@ public class Main {
 
         MnistFileReader mn =  new MnistFileReader();
 
-        File trainingLabelFile = new File("src/samples/training/train-labels-idx1-ubyte");
-        File testLabelFile = new File("src/samples/testing/t10k-labels-idx1-ubyte");
+//        File trainingLabelFile = new File("src/samples/training/train-labels-idx1-ubyte");
+//        mn.readLabelFile(trainingLabelFile);
+//
+//        File testLabelFile = new File("src/samples/testing/t10k-labels-idx1-ubyte");
+//        mn.readLabelFile(testLabelFile);
 
-        mn.readLabelFile(trainingLabelFile, "train");
-        mn.readLabelFile(testLabelFile, "test");
+//        File testImageFile = new File("src/samples/testing/t10k-images-idx3-ubyte");
+//        mn.readImageFile(testImageFile);
+
+        File trainingImageFile = new File("src/samples/training/train-images-idx3-ubyte");
+        mn.readImageFile(trainingImageFile);
+
 
     }
 }
