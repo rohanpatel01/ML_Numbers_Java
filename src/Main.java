@@ -19,33 +19,10 @@ public class Main {
             throw new RuntimeException(e);
         }
 
-
-        int index = 3;
+        int index = 2;
         System.out.println("Label = " + mn[index].getLabel());
+        System.out.println(Arrays.toString(mn[index].data));
 
-        for (int i = 0; i < mn[index].data.length; i++) {
-            for (int j = 0; j < mn[index].data[0].length; j++) {
-                if( mn[index].data[i][j] != 0) {
-                    System.out.print(1 + " ");
-                } else {
-                    System.out.print(0 + " ");
-                }
-            }
-        }
-
-
-//        MnistFileReader mn =  new MnistFileReader();
-
-//        File trainingLabelFile = new File("src/samples/training/train-labels-idx1-ubyte");
-//        mn.readLabelFile(trainingLabelFile);
-
-//        File trainingImageFile = new File("src/samples/training/train-images-idx3-ubyte");
-//        mn.readImageFile(trainingImageFile);
-//        File testLabelFile = new File("src/samples/testing/t10k-labels-idx1-ubyte");
-//        mn.readLabelFile(testLabelFile);
-//
-//        File testImageFile = new File("src/samples/testing/t10k-images-idx3-ubyte");
-//        mn.readImageFile(testImageFile);
 
     }
 }

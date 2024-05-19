@@ -1,7 +1,6 @@
 public class MnistMatrix {
 
-    public int [][] data;
-//    public int [] data;
+    public double [] data;
     private int nRows;
     private int nCols;
 
@@ -10,16 +9,7 @@ public class MnistMatrix {
     public MnistMatrix(int nRows, int nCols) {
         this.nRows = nRows;
         this.nCols = nCols;
-
-        data = new int[nRows][nCols];
-    }
-
-    public int getValue(int r, int c) {
-        return data[r][c];
-    }
-
-    public void setValue(int row, int col, int value) {
-        data[row][col] = value;
+        data = new double [nRows * nCols];
     }
 
     public int getLabel() {

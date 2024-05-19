@@ -31,7 +31,7 @@ public class MnistDataReader  {
             mnistMatrix.setLabel(labelInputStream.readUnsignedByte());
             for (int r = 0; r < nRows; r++) {
                 for (int c = 0; c < nCols; c++) {
-                    mnistMatrix.setValue(r, c, dataInputStream.readUnsignedByte());
+                    mnistMatrix.data[(nRows * r) + c] = dataInputStream.readUnsignedByte() / 255.0;
                 }
             }
             data[i] = mnistMatrix;
