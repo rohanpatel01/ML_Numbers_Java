@@ -2,6 +2,12 @@ import java.io.*;
 
 public class MnistDataReader  {
 
+    public int imageNumPixels;
+
+    public MnistDataReader() {
+        imageNumPixels = 0;
+    }
+
     public MnistMatrix[] readData(String dataFilePath, String labelFilePath) throws IOException {
 
         DataInputStream dataInputStream = new DataInputStream(new BufferedInputStream(new FileInputStream(dataFilePath)));
@@ -9,6 +15,7 @@ public class MnistDataReader  {
         int numberOfItems = dataInputStream.readInt();
         int nRows = dataInputStream.readInt();
         int nCols = dataInputStream.readInt();
+        imageNumPixels = nRows * nRows;
 
         System.out.println("magic number is " + magicNumber);
         System.out.println("number of items is " + numberOfItems);

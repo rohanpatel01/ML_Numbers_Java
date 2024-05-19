@@ -5,7 +5,11 @@ import java.util.Arrays;
 import java.util.Scanner;
 
 public class Main {
+
+
     public static void main(String[] args) {
+        int num_input_neurons;
+        final int NUM_OUTPUT_NEURONS = 10;
 
         File trainingLabelFile = new File("src/samples/training/train-labels-idx1-ubyte");
         File trainingImageFile = new File("src/samples/training/train-images-idx3-ubyte");
@@ -19,10 +23,10 @@ public class Main {
             throw new RuntimeException(e);
         }
 
-        int index = 2;
-        System.out.println("Label = " + mn[index].getLabel());
-        System.out.println(Arrays.toString(mn[index].data));
-
+        num_input_neurons = mnReader.imageNumPixels;
+        int [] networkConfiguration = {num_input_neurons, 2, 2, NUM_OUTPUT_NEURONS };
+        NeuralNetwork neuralNetwork = new NeuralNetwork(networkConfiguration);
+        neuralNetwork.print_layers();
 
     }
 }
