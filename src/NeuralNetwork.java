@@ -1,5 +1,7 @@
 import java.util.Arrays;
 
+import static java.lang.Math.exp;
+
 public class NeuralNetwork {
 
     int numLayers;
@@ -19,10 +21,28 @@ public class NeuralNetwork {
         }
 
         layers[numLayers - 1] = new Layer(null, networkConfig[numLayers - 1], layers[numLayers - 2]);
+
+
+
+
     }
 
-    public void forward_propigation(){
-
+    // TODO: Apply sigmoid to the new activation value
+    public void forward_propigation() {
+        // for each layer
+        for (int layerIndex = 1; layerIndex  < numLayers; layerIndex ++) {
+            // for each neuron in current layer
+            for (int currentNeuronIndex = 0; currentNeuronIndex < layers[layerIndex].numNeurons; currentNeuronIndex++) {
+                // perform matrix multiplication to compute weighted sum
+                for (int prevNeuronIndex = 0; prevNeuronIndex < layers[layerIndex].previousLayer.numNeurons; prevNeuronIndex++) {
+                    double previousLayerActivationValue = layers[layerIndex].previousLayer.neurons[prevNeuronIndex].activationValue;
+                    double weightFromPreviousNeuronToCurrent = layers[layerIndex].weights[currentNeuronIndex][prevNeuronIndex];
+                    layers[layerIndex].neurons[currentNeuronIndex].activationValue += (previousLayerActivationValue * weightFromPreviousNeuronToCurrent);
+                }
+                layers[layerIndex].neurons[currentNeuronIndex].activationValue += layers[layerIndex].bias[currentNeuronIndex];
+                layers[layerIndex].neurons[currentNeuronIndex].activationValue = sigmoid(layers[layerIndex].neurons[currentNeuronIndex].activationValue);
+            }
+        }
     }
 
     public void feed_data(MnistMatrix mn){
@@ -48,6 +68,19 @@ public class NeuralNetwork {
         for (int i = 0; i < numLayers; i++) {
             System.out.println(layers[i].numNeurons + ": " +  "Neurons: " + Arrays.toString(layers[i].neurons) + " Weights: " + Arrays.deepToString(layers[i].weights) + " Bias: " + Arrays.toString(layers[i].bias) );
         }
+    }
+
+    public static double sigmoid(double val) {
+        return (1.0 / (1.0 + exp(-val)));
+    }
+
+    public static double derivative_sigmoid(double val) {
+        return sigmoid(val) * (1 - sigmoid(val));
+    }
+
+    public static double exp(double val) {
+        final long tmp = (long) (1512775 * val + 1072632447);
+        return Double.longBitsToDouble(tmp << 32);
     }
 
 }

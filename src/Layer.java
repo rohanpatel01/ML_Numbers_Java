@@ -4,10 +4,12 @@ public class Layer {
     Neuron [] neurons;
     double [][] weights;
     double [] bias;
+    Layer previousLayer;
 
     public Layer(double [] initializationValues, int numNeurons, Layer previousLayer) {
         this.numNeurons = numNeurons;
         neurons = new Neuron[numNeurons];
+        this.previousLayer = previousLayer;
 
         if (previousLayer != null) {
             weights = new double[numNeurons][previousLayer.numNeurons];

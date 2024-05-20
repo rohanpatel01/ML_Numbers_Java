@@ -4,10 +4,15 @@ import java.security.spec.ECField;
 import java.util.Arrays;
 import java.util.Scanner;
 
+import static java.lang.Math.exp;
+
 public class Main {
 
 
     public static void main(String[] args) {
+
+
+
         int num_input_neurons;
         final int NUM_OUTPUT_NEURONS = 10;
 
@@ -25,7 +30,7 @@ public class Main {
 
         num_input_neurons = mnReader.imageNumPixels;
 //        int [] networkConfiguration = {num_input_neurons, 2, 2, NUM_OUTPUT_NEURONS };
-        int [] networkConfiguration = {3, 2, 2, 2};
+        int [] networkConfiguration = {3, 2, 2};
         NeuralNetwork neuralNetwork = new NeuralNetwork(networkConfiguration);
 //        neuralNetwork.print_layers();
 
@@ -37,4 +42,6 @@ public class Main {
         }
 
     }
+
+
 }
