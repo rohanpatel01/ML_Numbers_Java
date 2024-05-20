@@ -24,13 +24,15 @@ public class Main {
         }
 
         num_input_neurons = mnReader.imageNumPixels;
-        int [] networkConfiguration = {num_input_neurons, 2, 2, NUM_OUTPUT_NEURONS };
+//        int [] networkConfiguration = {num_input_neurons, 2, 2, NUM_OUTPUT_NEURONS };
+        int [] networkConfiguration = {3, 2, 2, 2};
         NeuralNetwork neuralNetwork = new NeuralNetwork(networkConfiguration);
 //        neuralNetwork.print_layers();
 
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 1; i++) {
             neuralNetwork.feed_data(mn[i]);
             neuralNetwork.forward_propigation();
+            neuralNetwork.print_layers();
 //            neuralNetwork.back_propigation();
         }
 

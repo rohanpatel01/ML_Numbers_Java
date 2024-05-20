@@ -6,7 +6,7 @@ public class NeuralNetwork {
     Layer [] layers;
     MnistMatrix mn;
 
-    // Assume that netwrokConfig.length > 2 as to have at least one hidden layer
+    // Assume that networkConfig.length > 2 as to have at least one hidden layer
     public NeuralNetwork(int [] networkConfig) {
 
         numLayers = networkConfig.length;
@@ -28,6 +28,14 @@ public class NeuralNetwork {
     public void feed_data(MnistMatrix mn){
         if (mn == null) { throw  new RuntimeException("Custom: Attempted to perform network action without input data"); }
 
+//        for (int i = 0; i < mn.data.length; i++) {
+//            layers[0].currentNeurons[i].activationValue = mn.data[i];
+//        }
+
+        // for test
+        for (int i = 0; i < layers[0].numNeurons; i++) {
+            layers[0].neurons[i].activationValue = i + 1;
+        }
 
     }
 
@@ -38,7 +46,7 @@ public class NeuralNetwork {
     public void print_layers() {
 
         for (int i = 0; i < numLayers; i++) {
-            System.out.println(layers[i].numNeurons + ": " +  Arrays.toString(layers[i].currentNeurons));
+            System.out.println(layers[i].numNeurons + ": " +  "Neurons: " + Arrays.toString(layers[i].neurons) + " Weights: " + Arrays.deepToString(layers[i].weights) + " Bias: " + Arrays.toString(layers[i].bias) );
         }
     }
 
