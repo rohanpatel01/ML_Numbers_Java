@@ -92,16 +92,10 @@ public class NeuralNetwork {
                 // compute nabla_w
                 for (int prevNeuronIndex = 0; prevNeuronIndex < layers[layerIndex - 1].numNeurons; prevNeuronIndex++) {
 
-                    double prevActivation =layers[layerIndex].previousLayer.neurons[prevNeuronIndex];
-                    double derivCurrZ = derivative_sigmoid(layers[layerIndex].z[currentNeuronIndex]);
-                    double curNabla_a =layers[layerIndex].nabla_a[currentNeuronIndex];
-
-                    layers[layerIndex].nabla_w[currentNeuronIndex][prevNeuronIndex] = prevActivation * derivCurrZ * curNabla_a;
-
-//                        layers[layerIndex].nabla_w[currentNeuronIndex][prevNeuronIndex] =
-//                                layers[layerIndex].previousLayer.neurons[prevNeuronIndex] *
-//                                derivative_sigmoid(layers[layerIndex].z[currentNeuronIndex]) *
-//                                layers[layerIndex].nabla_a[currentNeuronIndex];
+                        layers[layerIndex].nabla_w[currentNeuronIndex][prevNeuronIndex] =
+                                layers[layerIndex].previousLayer.neurons[prevNeuronIndex] *
+                                derivative_sigmoid(layers[layerIndex].z[currentNeuronIndex]) *
+                                layers[layerIndex].nabla_a[currentNeuronIndex];
                 }
             }
 
