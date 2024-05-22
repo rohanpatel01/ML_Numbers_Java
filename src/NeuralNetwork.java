@@ -67,18 +67,18 @@ public class NeuralNetwork {
 
     public void back_propigation() {
 
-        // populate expected array
-
-
         // for each layer going backwards
         for (int layerIndex = numLayers - 1; layerIndex > 0; layerIndex --) {
+
             // for each neuron in current layer
             for (int currentNeuronIndex = 0; currentNeuronIndex < layers[layerIndex].numNeurons; currentNeuronIndex++) {
 
                 // compute nabla_a
                 if (layerIndex == numLayers - 1) { // compute last layer differently than hidden layers
+
                     layers[layerIndex].nabla_a[currentNeuronIndex] = 2 * (layers[layerIndex].neurons[currentNeuronIndex] - expected[currentNeuronIndex]);
                 } else {
+
                     // compute nabla_a
                     for (int nextNeuronIndex = 0; nextNeuronIndex < layers[layerIndex + 1].numNeurons; nextNeuronIndex++) {
                         layers[layerIndex].nabla_a[currentNeuronIndex] +=
@@ -87,7 +87,6 @@ public class NeuralNetwork {
                                 layers[layerIndex + 1].nabla_a[nextNeuronIndex]);
                     }
                 }
-//                    layers[layerIndex].nabla_b[neuronIndex] =
 
                 // compute nabla_w
                 for (int prevNeuronIndex = 0; prevNeuronIndex < layers[layerIndex - 1].numNeurons; prevNeuronIndex++) {
@@ -97,6 +96,9 @@ public class NeuralNetwork {
                                 derivative_sigmoid(layers[layerIndex].z[currentNeuronIndex]) *
                                 layers[layerIndex].nabla_a[currentNeuronIndex];
                 }
+                // compute nabla_b
+                layers[layerIndex].nabla_b[currentNeuronIndex] = derivative_sigmoid(layers[layerIndex].z[currentNeuronIndex]) * layers[layerIndex].nabla_a[currentNeuronIndex];
+
             }
 
         }
@@ -112,7 +114,8 @@ public class NeuralNetwork {
                             " Bias: " + Arrays.toString(layers[i].bias) +
                             " Z: " + Arrays.toString(layers[i].z) +
                             " Nabla_a: " + Arrays.toString(layers[i].nabla_a) +
-                            " Nabla_w: " + Arrays.deepToString(layers[i].nabla_w)
+                            " Nabla_w: " + Arrays.deepToString(layers[i].nabla_w) +
+                            " Nabla_b: " + Arrays.toString(layers[i].nabla_b)
 
 
             );
