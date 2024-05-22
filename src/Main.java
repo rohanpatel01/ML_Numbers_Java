@@ -32,13 +32,17 @@ public class Main {
 //        int [] networkConfiguration = {num_input_neurons, 2, 2, NUM_OUTPUT_NEURONS };
         int [] networkConfiguration = {3, 2, 2};
         NeuralNetwork neuralNetwork = new NeuralNetwork(networkConfiguration);
-//        neuralNetwork.print_layers();
 
         for (int i = 0; i < 1; i++) {
-            neuralNetwork.feed_data(mn[i]);
+//            neuralNetwork.feed_data(mn[i]);
+
+            MnistMatrix simple = new MnistMatrix(0, 0);
+            simple.setLabel(0);
+            neuralNetwork.feed_data(simple);
+
             neuralNetwork.forward_propigation();
+            neuralNetwork.back_propigation();
             neuralNetwork.print_layers();
-//            neuralNetwork.back_propigation();
         }
 
     }
