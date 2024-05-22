@@ -15,6 +15,7 @@ public class Main {
 
         int num_input_neurons;
         final int NUM_OUTPUT_NEURONS = 10;
+        double learningRate = 0.001;
 
         File trainingLabelFile = new File("src/samples/training/train-labels-idx1-ubyte");
         File trainingImageFile = new File("src/samples/training/train-images-idx3-ubyte");
@@ -31,7 +32,7 @@ public class Main {
         num_input_neurons = mnReader.imageNumPixels;
 //        int [] networkConfiguration = {num_input_neurons, 2, 2, NUM_OUTPUT_NEURONS };
         int [] networkConfiguration = {3, 2, 2};
-        NeuralNetwork neuralNetwork = new NeuralNetwork(networkConfiguration);
+        NeuralNetwork neuralNetwork = new NeuralNetwork(networkConfiguration, learningRate);
 
         for (int i = 0; i < 1; i++) {
 //            neuralNetwork.feed_data(mn[i]);
@@ -43,6 +44,9 @@ public class Main {
             neuralNetwork.forward_propigation();
             neuralNetwork.back_propigation();
             neuralNetwork.print_layers();
+
+            // TODO: After a certain number of images have been processed (one batch) we should apply the nabla values
+            // TODO: by calling the nn.update_mini_batch method
         }
 
     }
