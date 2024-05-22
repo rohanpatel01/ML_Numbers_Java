@@ -1,3 +1,4 @@
+import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.util.Arrays;
 
@@ -77,17 +78,30 @@ public class NeuralNetwork {
                 // compute nabla_a
                 if (layerIndex == numLayers - 1) { // compute last layer differently than hidden layers
                     layers[layerIndex].nabla_a[currentNeuronIndex] = 2 * (layers[layerIndex].neurons[currentNeuronIndex] - expected[currentNeuronIndex]);
-//                    layers[layerIndex].nabla_b[neuronIndex] =
-                    // compute nabla_w?
                 } else {
+                    // compute nabla_a
                     for (int nextNeuronIndex = 0; nextNeuronIndex < layers[layerIndex + 1].numNeurons; nextNeuronIndex++) {
-                        // weight connecting current neuron to next
                         layers[layerIndex].nabla_a[currentNeuronIndex] +=
                                 (layers[layerIndex + 1].weights[nextNeuronIndex][currentNeuronIndex] *
                                 derivative_sigmoid(layers[layerIndex + 1].z[nextNeuronIndex]) *
                                 layers[layerIndex + 1].nabla_a[nextNeuronIndex]);
-
                     }
+                }
+//                    layers[layerIndex].nabla_b[neuronIndex] =
+
+                // compute nabla_w
+                for (int prevNeuronIndex = 0; prevNeuronIndex < layers[layerIndex - 1].numNeurons; prevNeuronIndex++) {
+
+                    double prevActivation =layers[layerIndex].previousLayer.neurons[prevNeuronIndex];
+                    double derivCurrZ = derivative_sigmoid(layers[layerIndex].z[currentNeuronIndex]);
+                    double curNabla_a =layers[layerIndex].nabla_a[currentNeuronIndex];
+
+                    layers[layerIndex].nabla_w[currentNeuronIndex][prevNeuronIndex] = prevActivation * derivCurrZ * curNabla_a;
+
+//                        layers[layerIndex].nabla_w[currentNeuronIndex][prevNeuronIndex] =
+//                                layers[layerIndex].previousLayer.neurons[prevNeuronIndex] *
+//                                derivative_sigmoid(layers[layerIndex].z[currentNeuronIndex]) *
+//                                layers[layerIndex].nabla_a[currentNeuronIndex];
                 }
             }
 
@@ -103,7 +117,8 @@ public class NeuralNetwork {
                             " Weights: " + Arrays.deepToString(layers[i].weights) +
                             " Bias: " + Arrays.toString(layers[i].bias) +
                             " Z: " + Arrays.toString(layers[i].z) +
-                            " Nabla_a: " + Arrays.toString(layers[i].nabla_a)
+                            " Nabla_a: " + Arrays.toString(layers[i].nabla_a) +
+                            " Nabla_w: " + Arrays.deepToString(layers[i].nabla_w)
 
 
             );

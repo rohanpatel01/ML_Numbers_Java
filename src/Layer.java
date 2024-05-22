@@ -7,7 +7,7 @@ public class Layer {
     double [] bias;
     double [] z;
     double [] nabla_a;
-    double [] nabla_w;
+    double [][] nabla_w;
     double [] nabla_b;
     Layer previousLayer;
 
@@ -22,8 +22,8 @@ public class Layer {
             bias = new double[numNeurons];
             z = new double[numNeurons];
             nabla_a = new double[numNeurons];
-            nabla_w = new double[numNeurons];
             nabla_b = new double[numNeurons];
+            nabla_w = new double[numNeurons][previousLayer.numNeurons];
 
             // initialize weights for simple network testing
             for (int i = 0; i < (numNeurons * previousLayer.numNeurons); i++) {
