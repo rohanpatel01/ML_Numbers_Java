@@ -1,3 +1,5 @@
+import javax.swing.*;
+import java.awt.*;
 import java.io.*;
 import java.nio.file.Files;
 import java.security.spec.ECField;
@@ -15,7 +17,9 @@ public class Main {
 
         int num_input_neurons;
         final int NUM_OUTPUT_NEURONS = 10;
-        double learningRate = 0.001;
+
+        final int BATCH_SIZE = 32;
+        final double LEARNING_RATE = 0.001;
 
         File trainingLabelFile = new File("src/samples/training/train-labels-idx1-ubyte");
         File trainingImageFile = new File("src/samples/training/train-images-idx3-ubyte");
@@ -32,7 +36,7 @@ public class Main {
         num_input_neurons = mnReader.imageNumPixels;
 //        int [] networkConfiguration = {num_input_neurons, 2, 2, NUM_OUTPUT_NEURONS };
         int [] networkConfiguration = {3, 2, 2};
-        NeuralNetwork neuralNetwork = new NeuralNetwork(networkConfiguration, learningRate);
+        NeuralNetwork neuralNetwork = new NeuralNetwork(networkConfiguration, LEARNING_RATE);
 
         for (int i = 0; i < 1; i++) {
 //            neuralNetwork.feed_data(mn[i]);
@@ -43,6 +47,10 @@ public class Main {
 
             neuralNetwork.forward_propigation();
             neuralNetwork.back_propigation();
+
+            // TODO: if we have finished a batch then only we update
+            // if (i >= BATCH_SIZE) {
+            neuralNetwork.update_mini_batch(BATCH_SIZE);
             neuralNetwork.print_layers();
 
             // TODO: After a certain number of images have been processed (one batch) we should apply the nabla values
@@ -50,6 +58,5 @@ public class Main {
         }
 
     }
-
 
 }
