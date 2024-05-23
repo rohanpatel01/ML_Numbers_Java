@@ -5,7 +5,6 @@ public class Main {
 
     public static void main(String[] args) {
 
-//        ScatterPlotExample plot = new ScatterPlotExample("ML_Java", "bias");
         ScatterPlot plot = new ScatterPlot("ML_Java", "Bias");
 
         int num_input_neurons;
@@ -30,7 +29,6 @@ public class Main {
 //        int [] networkConfiguration = {num_input_neurons, 2, 2, NUM_OUTPUT_NEURONS };
         int [] networkConfiguration = {3, 2, 2};
         NeuralNetwork neuralNetwork = new NeuralNetwork(networkConfiguration, LEARNING_RATE, plot);
-//        neuralNetwork.set_plot(plot);
 
         for (int i = 0; i < 1; i++) {
 //            neuralNetwork.feed_data(mn[i]);

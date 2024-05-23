@@ -173,18 +173,13 @@ public class NeuralNetwork {
         return sigmoid(val) * (1 - sigmoid(val));
     }
 
-//    public void set_plot(ScatterPlot plot) {
-//       this.plot = plot;
-//    }
-
     private void initialize_weights() {
 
         int x = 0;
 
         for (int l = 1; l < numLayers; l++) {
 
-//            int n = layers[l].previousLayer.numNeurons;
-            int n = 10;
+            int n = layers[l].previousLayer.numNeurons;
             double lower = -(1.0 / sqrt(n));
             double upper = (1.0 / sqrt(n));
 
