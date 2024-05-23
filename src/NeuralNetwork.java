@@ -4,11 +4,17 @@ import static java.lang.Math.*;
 
 public class NeuralNetwork {
 
-    int numLayers;
-    Layer [] layers;
-    double [] expected;
-    double learningRate;
-    MnistMatrix mn;
+    private int numLayers;
+    private Layer [] layers;
+    private double [] expected;
+    private double learningRate;
+    private int result = -1;
+    private int currentLabel = -99;
+    private int counter = 0;
+
+    public double numCorrect = 0;
+    public double cost = 0;
+
 
 //    private ScatterPlotExample plot;
     private ScatterPlot plot;
@@ -55,30 +61,51 @@ public class NeuralNetwork {
                 layers[layerIndex].z[currentNeuronIndex] = layers[layerIndex].neurons[currentNeuronIndex];
                 layers[layerIndex].neurons[currentNeuronIndex] = sigmoid(layers[layerIndex].neurons[currentNeuronIndex]);
 
-//                plot.addXYData(currentNeuronIndex, layers[layerIndex].neurons[currentNeuronIndex]);
+                // plot one weight and see how it moves
+
             }
         }
+
+        // find result and compute cost
+        double maxVal = Double.MIN_VALUE;
+        for (int i = 0; i < layers[numLayers - 1].numNeurons; i++) {
+
+            // compute and plot cost
+            cost += Math.pow(layers[numLayers - 1].neurons[i] - expected[i]  , 2);
+
+            // find highest value
+            if (layers[numLayers - 1].neurons[i] > maxVal) {
+                maxVal = layers[numLayers - 1].neurons[i];
+                result = i;
+            }
+        }
+
+//        plot.addData(counter, cost);
+
+
+
+        if (result == currentLabel) {
+            numCorrect++;
+        }
+
+        plot.addData(counter, cost);
+        counter++;
+
+        cost = 0; // reset for next iteration
+
     }
 
     public void feed_data(MnistMatrix mn){
         if (mn == null) { throw  new RuntimeException("Custom: Attempted to perform network action without input data"); }
 
-//        for (int i = 0; i < mn.data.length; i++) {
-//            layers[0].currentNeurons[i].activationValue = mn.data[i];
-//        }
-
-
-
-        // for test
-        for (int i = 0; i < layers[0].numNeurons; i++) {
-            layers[0].neurons[i] = i + 1;
-
-//            plot.addData(i, layers[0].neurons[i]);
+        for (int i = 0; i < mn.data.length; i++) {
+            layers[0].neurons[i] = mn.data[i];
         }
 
         // populate expected array
         expected = new double[layers[numLayers - 1].numNeurons];
         expected[mn.getLabel()] = 1;
+        currentLabel = mn.getLabel();
     }
 
     public void back_propigation() {
@@ -136,6 +163,10 @@ public class NeuralNetwork {
                 layers[layerIndex].bias[i] -= (learningRate * (layers[layerIndex].nabla_b[i] / lenMiniBatch));
 
             }
+
+//            plot.addData(counter, layers[1].weights[0][0]);
+//            counter++;
+
             // reset nabla weight and bias to 0
             layers[layerIndex].nabla_w = new double[layers[layerIndex].numNeurons][layers[layerIndex].previousLayer.numNeurons];
             layers[layerIndex].nabla_b = new double[layers[layerIndex].numNeurons];
@@ -144,6 +175,8 @@ public class NeuralNetwork {
 
 
     }
+
+
 
     public void print_layers() {
 
@@ -186,7 +219,6 @@ public class NeuralNetwork {
             for (int i = 0; i < layers[l].weights.length; i++) {
                 for (int j = 0; j < layers[l].weights[0].length; j++) {
                     layers[l].weights[i][j] = lower + random() * (upper - lower);
-                    plot.addData(x, layers[l].weights[i][j] );
                     x++;
 
                 }
