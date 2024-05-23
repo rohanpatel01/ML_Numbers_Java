@@ -1,6 +1,6 @@
 import java.util.Arrays;
 
-import static java.lang.Math.exp;
+import static java.lang.Math.*;
 
 public class NeuralNetwork {
 
@@ -11,23 +11,32 @@ public class NeuralNetwork {
     MnistMatrix mn;
 
 //    private ScatterPlotExample plot;
-    private ScatterChart plot;
+    private ScatterPlot plot;
 
     // Assume that networkConfig.length > 2 as to have at least one hidden layer
-    public NeuralNetwork(int [] networkConfig, double learningRate) {
+    public NeuralNetwork(int [] networkConfig, double learningRate, ScatterPlot plot) {
 
         this.learningRate = learningRate;
         numLayers = networkConfig.length;
         layers = new Layer[numLayers];
         expected = new double[networkConfig[networkConfig.length - 1]];
+        this.plot = plot;
+
+        // create input layer
         layers[0] = new Layer(null, networkConfig[0], null);
 
-        // initialize hidden layers
+        // create hidden layers
         for (int i = 1; i <= numLayers - 2; i++) {
             layers[i] = new Layer(null, networkConfig[i], layers[i - 1]);
         }
 
+        // create last layer
         layers[numLayers - 1] = new Layer(null, networkConfig[numLayers - 1], layers[numLayers - 2]);
+
+        // initialize weights
+        initialize_weights();
+
+
     }
 
     // TODO: Apply sigmoid to the new activation value
@@ -64,9 +73,7 @@ public class NeuralNetwork {
         for (int i = 0; i < layers[0].numNeurons; i++) {
             layers[0].neurons[i] = i + 1;
 
-            // TODO: plot
-//            plot.addXYData(i, layers[0].neurons[i]);
-            plot.addData(i, layers[0].neurons[i]);
+//            plot.addData(i, layers[0].neurons[i]);
         }
 
         // populate expected array
@@ -158,25 +165,40 @@ public class NeuralNetwork {
         System.out.println("Expected: " + Arrays.toString(expected));
     }
 
-    public static double sigmoid(double val) {
+    private static double sigmoid(double val) {
         return (1.0 / (1.0 + exp(-val)));
     }
 
-    public static double derivative_sigmoid(double val) {
+    private static double derivative_sigmoid(double val) {
         return sigmoid(val) * (1 - sigmoid(val));
     }
 
-//    public static double exp(double val) {
-//        final long tmp = (long) (1512775 * val + 1072632447);
-//        return Double.longBitsToDouble(tmp << 32);
-//    }
-
-//    public void set_plot(ScatterPlotExample plot) {
+//    public void set_plot(ScatterPlot plot) {
 //       this.plot = plot;
 //    }
 
-    public void set_plot(ScatterChart plot) {
-       this.plot = plot;
+    private void initialize_weights() {
+
+        int x = 0;
+
+        for (int l = 1; l < numLayers; l++) {
+
+//            int n = layers[l].previousLayer.numNeurons;
+            int n = 10;
+            double lower = -(1.0 / sqrt(n));
+            double upper = (1.0 / sqrt(n));
+
+            for (int i = 0; i < layers[l].weights.length; i++) {
+                for (int j = 0; j < layers[l].weights[0].length; j++) {
+                    layers[l].weights[i][j] = lower + random() * (upper - lower);
+                    plot.addData(x, layers[l].weights[i][j] );
+                    x++;
+
+                }
+            }
+        }
+
+
     }
 
 }

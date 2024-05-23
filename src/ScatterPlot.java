@@ -17,7 +17,7 @@ import java.util.List;
  * <li>Setting marker size
  * <li>Formatting of negative numbers with large magnitude but small differences
  */
-public class ScatterChart  { // implements ExampleChart<XYChart>
+public class ScatterPlot { // implements ExampleChart<XYChart>
 
     XYChart chart;
     List<Double> Xdata;
@@ -26,7 +26,7 @@ public class ScatterChart  { // implements ExampleChart<XYChart>
 
     // TODO: Add functionality to plot multiple series and be able to see it
 
-    public ScatterChart(String title, String staringSeriesName) {
+    public ScatterPlot(String title, String staringSeriesName) {
 
         Xdata = new ArrayList<>();
         Ydata = new ArrayList<>();

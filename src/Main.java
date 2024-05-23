@@ -1,12 +1,4 @@
-import javax.swing.*;
-import java.awt.*;
 import java.io.*;
-import java.nio.file.Files;
-import java.security.spec.ECField;
-import java.util.Arrays;
-import java.util.Scanner;
-
-import static java.lang.Math.exp;
 
 public class Main {
 
@@ -14,7 +6,7 @@ public class Main {
     public static void main(String[] args) {
 
 //        ScatterPlotExample plot = new ScatterPlotExample("ML_Java", "bias");
-        ScatterChart plot = new ScatterChart("ML_Java", "Bias");
+        ScatterPlot plot = new ScatterPlot("ML_Java", "Bias");
 
         int num_input_neurons;
         final int NUM_OUTPUT_NEURONS = 10;
@@ -37,8 +29,8 @@ public class Main {
         num_input_neurons = mnReader.imageNumPixels;
 //        int [] networkConfiguration = {num_input_neurons, 2, 2, NUM_OUTPUT_NEURONS };
         int [] networkConfiguration = {3, 2, 2};
-        NeuralNetwork neuralNetwork = new NeuralNetwork(networkConfiguration, LEARNING_RATE);
-        neuralNetwork.set_plot(plot);
+        NeuralNetwork neuralNetwork = new NeuralNetwork(networkConfiguration, LEARNING_RATE, plot);
+//        neuralNetwork.set_plot(plot);
 
         for (int i = 0; i < 1; i++) {
 //            neuralNetwork.feed_data(mn[i]);
@@ -46,7 +38,6 @@ public class Main {
             MnistMatrix simple = new MnistMatrix(0, 0);
             simple.setLabel(0);
             neuralNetwork.feed_data(simple);
-
             neuralNetwork.forward_propigation();
             neuralNetwork.back_propigation();
 
@@ -58,12 +49,6 @@ public class Main {
             // TODO: After a certain number of images have been processed (one batch) we should apply the nabla values
             // TODO: by calling the nn.update_mini_batch method
         }
-
-        // graph
-//        System.out.println("Chart: " + plot.series1.getItemCount());
-//        System.out.println("Chart: " + plot.series1.getItems().toString());
-//        plot.createChart();
-//        plot.graph();
 
         // chart
         plot.graph();
