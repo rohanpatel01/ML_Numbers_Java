@@ -42,5 +42,7 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="xchart-3.8.8" level="project" />
+    <orderEntry type="library" name="xchart-demo-3.8.8" level="project" />
   </component>
 </module>

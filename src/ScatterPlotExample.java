@@ -10,16 +10,45 @@ import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
+/*
+    TODO: add functionality to plot multiple series and add them dynamically
+ */
+
+
 public class ScatterPlotExample extends JFrame {
     private static final long serialVersionUID = 6294689542092367723L;
+    public XYSeriesCollection dataset;
+    public XYSeries series1;
 
-    public ScatterPlotExample(String title) {
+    public ScatterPlotExample(String title, String startingSeriesName) {
         super(title);
 
-        // Create dataset
-        XYDataset dataset = createDataset();
+        dataset = new XYSeriesCollection();
+        series1 = new XYSeries(startingSeriesName);
 
-        // Create chart
+    }
+
+    public void graph() {
+        SwingUtilities.invokeLater(() -> {
+            this.setSize(800, 400);
+            this.setLocationRelativeTo(null);
+            this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+            this.setVisible(true);
+        });
+
+    }
+
+//    public void addSeries() {
+//
+//    }
+
+    // TODO: add support for which series we want to add the data to
+    public void addXYData(double x, double y) {
+        series1.add(x, y);
+    }
+
+    public void createChart() {
+       // Create chart
         JFreeChart chart = ChartFactory.createScatterPlot(
                 "Boys VS Girls weight comparison chart",
                 "X-Axis", "Y-Axis", dataset);
@@ -33,51 +62,9 @@ public class ScatterPlotExample extends JFrame {
         // Create Panel
         ChartPanel panel = new ChartPanel(chart);
         setContentPane(panel);
-    }
-
-    private XYDataset createDataset() {
-        XYSeriesCollection dataset = new XYSeriesCollection();
-
-        //Boys (Age,weight) series
-        XYSeries series1 = new XYSeries("Boys");
-        series1.add(1, 72.9);
-        series1.add(2, 81.6);
-        series1.add(3, 88.9);
-        series1.add(4, 96);
-        series1.add(5, 102.1);
-        series1.add(6, 108.5);
-        series1.add(7, 113.9);
-        series1.add(8, 119.3);
-        series1.add(9, 123.8);
-        series1.add(10, 124.4);
 
         dataset.addSeries(series1);
-
-        //Girls (Age,weight) series
-        XYSeries series2 = new XYSeries("Girls");
-        series2.add(1, 72.5);
-        series2.add(2, 80.1);
-        series2.add(3, 87.2);
-        series2.add(4, 94.5);
-        series2.add(5, 101.4);
-        series2.add(6, 107.4);
-        series2.add(7, 112.8);
-        series2.add(8, 118.2);
-        series2.add(9, 122.9);
-        series2.add(10, 123.4);
-
-        dataset.addSeries(series2);
-
-        return dataset;
+//        return dataset;
     }
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            ScatterPlotExample example = new ScatterPlotExample("Scatter Chart Example");
-            example.setSize(800, 400);
-            example.setLocationRelativeTo(null);
-            example.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-            example.setVisible(true);
-        });
-    }
-}  
+}

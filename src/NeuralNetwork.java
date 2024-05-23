@@ -1,5 +1,3 @@
-import java.lang.reflect.Array;
-import java.math.BigDecimal;
 import java.util.Arrays;
 
 import static java.lang.Math.exp;
@@ -11,6 +9,9 @@ public class NeuralNetwork {
     double [] expected;
     double learningRate;
     MnistMatrix mn;
+
+//    private ScatterPlotExample plot;
+    private ScatterChart plot;
 
     // Assume that networkConfig.length > 2 as to have at least one hidden layer
     public NeuralNetwork(int [] networkConfig, double learningRate) {
@@ -44,6 +45,8 @@ public class NeuralNetwork {
                 layers[layerIndex].neurons[currentNeuronIndex] += layers[layerIndex].bias[currentNeuronIndex];
                 layers[layerIndex].z[currentNeuronIndex] = layers[layerIndex].neurons[currentNeuronIndex];
                 layers[layerIndex].neurons[currentNeuronIndex] = sigmoid(layers[layerIndex].neurons[currentNeuronIndex]);
+
+//                plot.addXYData(currentNeuronIndex, layers[layerIndex].neurons[currentNeuronIndex]);
             }
         }
     }
@@ -60,6 +63,10 @@ public class NeuralNetwork {
         // for test
         for (int i = 0; i < layers[0].numNeurons; i++) {
             layers[0].neurons[i] = i + 1;
+
+            // TODO: plot
+//            plot.addXYData(i, layers[0].neurons[i]);
+            plot.addData(i, layers[0].neurons[i]);
         }
 
         // populate expected array
@@ -120,6 +127,7 @@ public class NeuralNetwork {
             // update biases
             for (int i = 0; i < layers[layerIndex].numNeurons; i++) {
                 layers[layerIndex].bias[i] -= (learningRate * (layers[layerIndex].nabla_b[i] / lenMiniBatch));
+
             }
             // reset nabla weight and bias to 0
             layers[layerIndex].nabla_w = new double[layers[layerIndex].numNeurons][layers[layerIndex].previousLayer.numNeurons];
@@ -162,5 +170,13 @@ public class NeuralNetwork {
 //        final long tmp = (long) (1512775 * val + 1072632447);
 //        return Double.longBitsToDouble(tmp << 32);
 //    }
+
+//    public void set_plot(ScatterPlotExample plot) {
+//       this.plot = plot;
+//    }
+
+    public void set_plot(ScatterChart plot) {
+       this.plot = plot;
+    }
 
 }
