@@ -1,3 +1,4 @@
+package input;
 import java.io.*;
 
 public class MnistDataReader  {
