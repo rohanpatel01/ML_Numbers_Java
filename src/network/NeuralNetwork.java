@@ -11,18 +11,18 @@ public class NeuralNetwork {
 
 	private int numLayers;
 	private Layer[] layers;
-	private double[] expected;
-	private double learningRate;
+	private float[] expected;
+	private float learningRate;
 	private TestCase data;
 	private int batchSize;
 
-	public NeuralNetwork(int[] layer_sizes, double learningRate) {
+	public NeuralNetwork(int[] layer_sizes, float learningRate) {
 		assert layer_sizes.length >= 2;
 
 		this.learningRate = learningRate;
 		numLayers = layer_sizes.length;
 		layers = new Layer[numLayers];
-		expected = new double[layer_sizes[layer_sizes.length - 1]];
+		expected = new float[layer_sizes[layer_sizes.length - 1]];
 
 		// create input layer
 		layers[0] = new Layer(layer_sizes[0], null);
@@ -59,7 +59,7 @@ public class NeuralNetwork {
 		}
 
 		// populate expected array
-		expected = new double[layers[numLayers - 1].getNrNeurons()];
+		expected = new float[layers[numLayers - 1].getNrNeurons()];
 		for (int i = 0; i < data.getOutputSize(); i++) {
 			expected[i] = data.getOutput(i);
 		}
@@ -89,11 +89,11 @@ public class NeuralNetwork {
 		this.batchSize++;
 	}
 
-	public double getCost() {
+	public float getCost() {
 		return this.layers[this.numLayers - 1].cost;
 	}
 
-	public double[] getOutputActivations() {
+	public float[] getOutputActivations() {
 		return this.layers[this.numLayers - 1].neurons;
 	}
 

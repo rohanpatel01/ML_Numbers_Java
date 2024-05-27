@@ -21,19 +21,19 @@ public class Main {
 		ScatterPlot plot = new ScatterPlot("training XOR", "costs");
 		int batch_size = 100;
 		int nr_batches = 10000;
-		double learning_rate = 0.01;
+		float learning_rate = 0.01f;
 
 		int[] layer_sizes = { 2, 8, 1 };
 		NeuralNetwork network = new NeuralNetwork(layer_sizes, learning_rate * batch_size);
 
 		TestCase[] data = new TestCase[4];
-		data[0] = new InputArray(new double[] { 0, 0 }, new double[] { 0 });
-		data[1] = new InputArray(new double[] { 1, 0 }, new double[] { 1 });
-		data[2] = new InputArray(new double[] { 0, 1 }, new double[] { 1 });
-		data[3] = new InputArray(new double[] { 1, 1 }, new double[] { 0 });
+		data[0] = new InputArray(new float[] { 0, 0 }, new float[] { 0 });
+		data[1] = new InputArray(new float[] { 1, 0 }, new float[] { 1 });
+		data[2] = new InputArray(new float[] { 0, 1 }, new float[] { 1 });
+		data[3] = new InputArray(new float[] { 1, 1 }, new float[] { 0 });
 
 		for (int i = 0; i < nr_batches; i++) {
-			double avg_cost = 0;
+			float avg_cost = 0;
 			for (int j = 0; j < batch_size; j++) {
 				int next_tc = (int) (Math.random() * 4);
 				network.feedData(data[next_tc]);
@@ -60,11 +60,10 @@ public class Main {
 	}
 
 	public static void runMNIST() {
-
 		ScatterPlot plot = new ScatterPlot("training mnist", "costs");
 		int batch_size = 100;
 		int nr_batches = 10000;
-		double learning_rate = 0.01;
+		float learning_rate = 0.01f;
 
 		File trainingLabelFile = new File("src/samples/training/train-labels-idx1-ubyte");
 		File trainingImageFile = new File("src/samples/training/train-images-idx3-ubyte");
@@ -85,7 +84,7 @@ public class Main {
 
 		System.out.println(" -- TRAINING START -- ");
 		for (int i = 0; i < nr_batches; i++) {
-			double avg_cost = 0;
+			float avg_cost = 0;
 			for (int j = 0; j < batch_size; j++) {
 				int next_tc = (int) (Math.random() * mn.length);
 				network.feedData(mn[next_tc]);
@@ -102,13 +101,13 @@ public class Main {
 		}
 		System.out.println(" -- TRAINING DONE -- ");
 
-		File testingLabelFile = new File("src/samples/testing/t10k-images-idx3-ubyte");
-		File testingImageFile = new File("src/samples/testing/t10k-labels-idx1-ubyte");
+		File testingLabelFile = new File("src/samples/testing/t10k-labels-idx3-ubyte");
+		File testingImageFile = new File("src/samples/testing/t10k-images-idx1-ubyte");
 
 		int nr_correct = 0;
 
 		try {
-			mn = mnReader.readData(trainingImageFile.getPath(), trainingLabelFile.getPath());
+			mn = mnReader.readData(testingImageFile.getPath(), testingLabelFile.getPath());
 		}
 		catch (IOException e) {
 			throw new RuntimeException(e);
@@ -118,7 +117,7 @@ public class Main {
 		for (int i = 0; i < mn.length; i++) {
 			network.feedData(mn[i]);
 			network.forwardPropagate();
-			double[] output = network.getOutputActivations();
+			float[] output = network.getOutputActivations();
 			int guess = 0;
 			for (int j = 1; j < 10; j++) {
 				if (output[j] > output[guess]) {
@@ -131,7 +130,7 @@ public class Main {
 		}
 		System.out.println(" -- TESTING DONE -- ");
 
-		double testing_accuracy = (double) nr_correct / (double) mn.length;
+		float testing_accuracy = (float) nr_correct / (float) mn.length;
 		System.out.println("Testing Accuracy : " + testing_accuracy);
 
 		plot.graph();

@@ -7,41 +7,41 @@ import math.MathUtils;
 
 public class Layer {
 
-	double[] neurons; //activation of neurons
-	double[][] weights; //weights[i][j] = edge from previous layer neuron j to this layer neuron i
-	double[] bias;
-	double[] z; //weighted input sum
-	double[] nabla_a, nabla_b, nabla_z;
-	double[][] nabla_w;
+	float[] neurons; //activation of neurons
+	float[][] weights; //weights[i][j] = edge from previous layer neuron j to this layer neuron i
+	float[] bias;
+	float[] z; //weighted input sum
+	float[] nabla_a, nabla_b, nabla_z;
+	float[][] nabla_w;
 
-	double[] nabla_a_sum, nabla_b_sum, nabla_z_sum;
-	double[][] nabla_w_sum;
+	float[] nabla_a_sum, nabla_b_sum, nabla_z_sum;
+	float[][] nabla_w_sum;
 
 	Layer previousLayer;
 	Layer nextLayer;
 
-	double cost;
+	float cost;
 
 	public Layer(int nr_neurons, Layer prev_layer) {
 
 		this.previousLayer = prev_layer;
 
-		bias = new double[nr_neurons];
-		nabla_b = new double[nr_neurons];
-		nabla_b_sum = new double[nr_neurons];
+		bias = new float[nr_neurons];
+		nabla_b = new float[nr_neurons];
+		nabla_b_sum = new float[nr_neurons];
 
-		neurons = new double[nr_neurons];
-		nabla_a = new double[nr_neurons];
-		nabla_a_sum = new double[nr_neurons];
+		neurons = new float[nr_neurons];
+		nabla_a = new float[nr_neurons];
+		nabla_a_sum = new float[nr_neurons];
 
-		z = new double[nr_neurons];
-		nabla_z = new double[nr_neurons];
-		nabla_z_sum = new double[nr_neurons];
+		z = new float[nr_neurons];
+		nabla_z = new float[nr_neurons];
+		nabla_z_sum = new float[nr_neurons];
 
 		if (previousLayer != null) {
-			weights = new double[nr_neurons][previousLayer.getNrNeurons()];
-			nabla_w = new double[nr_neurons][previousLayer.getNrNeurons()];
-			nabla_w_sum = new double[nr_neurons][previousLayer.getNrNeurons()];
+			weights = new float[nr_neurons][previousLayer.getNrNeurons()];
+			nabla_w = new float[nr_neurons][previousLayer.getNrNeurons()];
+			nabla_w_sum = new float[nr_neurons][previousLayer.getNrNeurons()];
 		}
 	}
 
@@ -53,11 +53,11 @@ public class Layer {
 		//initialize weights
 		if (this.previousLayer != null) {
 			int n = this.previousLayer.getNrNeurons();
-			double range = 1.0 / sqrt(n);
+			float range = 1.0f / (float) Math.sqrt(n);
 
 			for (int i = 0; i < this.weights.length; i++) {
 				for (int j = 0; j < this.weights[i].length; j++) {
-					this.weights[i][j] = Math.random() * (2 * range) - range;
+					this.weights[i][j] = (float) Math.random() * (2 * range) - range;
 				}
 			}
 		}
@@ -75,7 +75,7 @@ public class Layer {
 	/**
 	 * take in stuff from previous layer and recompute neuron activations. 
 	 */
-	public void forwardPropagate(double[] expected) {
+	public void forwardPropagate(float[] expected) {
 		assert this.previousLayer != null;
 
 		//reset neurons
@@ -115,7 +115,7 @@ public class Layer {
 	/**
 	 * take in stuff from next layer, and compute weight increments. 
 	 */
-	public void backPropagate(double[] expected) {
+	public void backPropagate(float[] expected) {
 		//reset all derivatives
 		for (int i = 0; i < this.nabla_a.length; i++) {
 			this.nabla_a[i] = 0;
@@ -139,7 +139,7 @@ public class Layer {
 			assert expected.length == this.neurons.length;
 			//this is the output layer
 			for (int i = 0; i < this.neurons.length; i++) {
-				this.nabla_a[i] = -2.0 * (expected[i] - this.neurons[i]);
+				this.nabla_a[i] = -2.0f * (expected[i] - this.neurons[i]);
 			}
 		}
 		else {
@@ -164,7 +164,7 @@ public class Layer {
 		if (this.previousLayer != null) {
 			for (int i = 0; i < this.neurons.length; i++) {
 				for (int j = 0; j < this.previousLayer.neurons.length; j++) {
-					double prev_a = this.previousLayer.neurons[j];
+					float prev_a = this.previousLayer.neurons[j];
 					this.nabla_w[i][j] = prev_a * this.nabla_z[i];
 				}
 			}
@@ -189,7 +189,7 @@ public class Layer {
 		}
 	}
 
-	public void applyGradients(int batch_size, double learning_rate) {
+	public void applyGradients(int batch_size, float learning_rate) {
 		learning_rate /= batch_size;
 
 		//apply to bias

@@ -2,10 +2,10 @@ package input;
 
 public class InputArray extends TestCase {
 
-	private double[] inputData;
-	private double[] outputData;
+	private float[] inputData;
+	private float[] outputData;
 
-	public InputArray(double[] input_data, double[] output_data) {
+	public InputArray(float[] input_data, float[] output_data) {
 		this.inputData = input_data;
 		this.outputData = output_data;
 	}
@@ -16,7 +16,7 @@ public class InputArray extends TestCase {
 	}
 
 	@Override
-	public double getInput(int ind) {
+	public float getInput(int ind) {
 		return this.inputData[ind];
 	}
 
@@ -26,7 +26,7 @@ public class InputArray extends TestCase {
 	}
 
 	@Override
-	public double getOutput(int ind) {
+	public float getOutput(int ind) {
 		return this.outputData[ind];
 	}
 

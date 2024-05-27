@@ -1,6 +1,7 @@
 package input;
+
 public class MnistMatrix extends TestCase {
-	public double[] data;
+	public float[] data;
 	private int nRows;
 	private int nCols;
 
@@ -9,7 +10,7 @@ public class MnistMatrix extends TestCase {
 	public MnistMatrix(int nRows, int nCols) {
 		this.nRows = nRows;
 		this.nCols = nCols;
-		data = new double[nRows * nCols];
+		data = new float[nRows * nCols];
 	}
 
 	public int getLabel() {
@@ -34,7 +35,7 @@ public class MnistMatrix extends TestCase {
 	}
 
 	@Override
-	public double getInput(int ind) {
+	public float getInput(int ind) {
 		return this.data[ind];
 	}
 
@@ -44,7 +45,7 @@ public class MnistMatrix extends TestCase {
 	}
 
 	@Override
-	public double getOutput(int ind) {
+	public float getOutput(int ind) {
 		return ind == this.label ? 1 : 0;
 	}
 
