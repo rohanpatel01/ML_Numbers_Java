@@ -30,7 +30,7 @@ public class NeuralNetwork {
 		expected = new float[layer_sizes[layer_sizes.length - 1]];
 
 		// create input layer
-		layers[0] = new Layer(layer_sizes[0], null, "");
+		layers[0] = new Layer(layer_sizes[0], null);
 
 		// create hidden layers
 		for (int i = 1; i < numLayers - 1; i++) {
@@ -91,7 +91,7 @@ public class NeuralNetwork {
 
 	public void backPropagate() {
 		assert this.data != null;
-		for (int i = this.numLayers - 1; i >= 0; i--) {
+		for (int i = this.numLayers - 1; i > 0; i--) { // was >=
 			this.layers[i].backPropagate(this.expected);
 		}
 		this.batchSize++;

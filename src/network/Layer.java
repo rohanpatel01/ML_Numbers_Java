@@ -23,6 +23,30 @@ public class Layer {
 
 	float cost;
 
+
+	public Layer(int nr_neurons, Layer prev_layer) {
+
+		this.previousLayer = prev_layer;
+
+		bias = new float[nr_neurons];
+		nabla_b = new float[nr_neurons];
+		nabla_b_sum = new float[nr_neurons];
+
+		neurons = new float[nr_neurons];
+		nabla_a = new float[nr_neurons];
+		nabla_a_sum = new float[nr_neurons];
+
+		z = new float[nr_neurons];
+		nabla_z = new float[nr_neurons];
+		nabla_z_sum = new float[nr_neurons];
+
+		if (previousLayer != null) {
+			weights = new float[nr_neurons][previousLayer.getNrNeurons()];
+			nabla_w = new float[nr_neurons][previousLayer.getNrNeurons()];
+			nabla_w_sum = new float[nr_neurons][previousLayer.getNrNeurons()];
+		}
+	}
+
 	public Layer(int nr_neurons, Layer prev_layer, String activationFunction) {
 
 		this.previousLayer = prev_layer;

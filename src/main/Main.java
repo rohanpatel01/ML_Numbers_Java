@@ -81,7 +81,7 @@ public class Main {
 
 		int input_size = mn[0].getInputSize();
 		int[] layer_sizes = { input_size, 64, 32, 10 };
-		NeuralNetwork network = new NeuralNetwork(layer_sizes, learning_rate * batch_size, "sigmoid");
+		NeuralNetwork network = new NeuralNetwork(layer_sizes, learning_rate * batch_size, "reLU");
 
 		System.out.println(" -- TRAINING START -- ");
 		for (int i = 0; i < nr_batches; i++) {
