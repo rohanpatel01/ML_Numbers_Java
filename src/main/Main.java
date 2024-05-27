@@ -101,8 +101,8 @@ public class Main {
 		}
 		System.out.println(" -- TRAINING DONE -- ");
 
-		File testingLabelFile = new File("src/samples/testing/t10k-labels-idx3-ubyte");
-		File testingImageFile = new File("src/samples/testing/t10k-images-idx1-ubyte");
+		File testingLabelFile = new File("src/samples/testing/t10k-labels-idx1-ubyte");
+		File testingImageFile = new File("src/samples/testing/t10k-images-idx3-ubyte");
 
 		int nr_correct = 0;
 
