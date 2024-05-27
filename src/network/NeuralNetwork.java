@@ -93,6 +93,10 @@ public class NeuralNetwork {
 		return this.layers[this.numLayers - 1].cost;
 	}
 
+	public double[] getOutputActivations() {
+		return this.layers[this.numLayers - 1].neurons;
+	}
+
 	/**
 	 * Apply the nabla for weight and bias after a batch
 	 */
