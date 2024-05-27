@@ -19,12 +19,15 @@ public class Layer {
 
 	Layer previousLayer;
 	Layer nextLayer;
+	String activationFunction;
 
 	float cost;
 
-	public Layer(int nr_neurons, Layer prev_layer) {
+	public Layer(int nr_neurons, Layer prev_layer, String activationFunction) {
 
 		this.previousLayer = prev_layer;
+
+		this.activationFunction = activationFunction;
 
 		bias = new float[nr_neurons];
 		nabla_b = new float[nr_neurons];
@@ -99,7 +102,7 @@ public class Layer {
 
 		//apply sigmoid
 		for (int i = 0; i < this.neurons.length; i++) {
-			this.neurons[i] = MathUtils.sigmoid(this.z[i]);
+			this.neurons[i] = activation_function(this.z[i]); // was sigmoid
 		}
 
 		//if this is the last layer, compute the cost
@@ -152,7 +155,7 @@ public class Layer {
 
 		//compute nabla_z
 		for (int i = 0; i < this.neurons.length; i++) {
-			this.nabla_z[i] = MathUtils.derivative_sigmoid(this.z[i]) * this.nabla_a[i];
+			this.nabla_z[i] = derivative_activation_function(this.z[i]) * this.nabla_a[i]; // was derivative sigmoid
 		}
 
 		//compute nabla_b
@@ -223,6 +226,31 @@ public class Layer {
 				}
 			}
 		}
+	}
+
+	private float activation_function(double val) {
+
+		if (activationFunction.equals("sigmoid")) {
+			return MathUtils.sigmoid(val);
+		} else if (activationFunction.equals("reLU")) {
+			return MathUtils.reLU(val);
+		}
+
+		assert false : "incorrect activation function";
+		return 0.0f;
+
+	}
+
+	private float derivative_activation_function(double val) {
+
+		if (activationFunction.equals("sigmoid")) {
+			return MathUtils.derivative_sigmoid(val);
+		} else if (activationFunction.equals("reLU")) {
+			return MathUtils.derivative_reLU(val);
+		}
+
+		assert false : "incorrect activation function";
+		return 0.0f;
 	}
 
 }

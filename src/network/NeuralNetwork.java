@@ -15,9 +15,14 @@ public class NeuralNetwork {
 	private float learningRate;
 	private TestCase data;
 	private int batchSize;
+	private String hiddenActivationFunction;
 
-	public NeuralNetwork(int[] layer_sizes, float learningRate) {
+	public NeuralNetwork(int[] layer_sizes, float learningRate, String hiddenActivationFunction) {
+
 		assert layer_sizes.length >= 2;
+		assert hiddenActivationFunction.equals("sigmoid") || hiddenActivationFunction.equals("reLU");
+
+		this.hiddenActivationFunction = hiddenActivationFunction;
 
 		this.learningRate = learningRate;
 		numLayers = layer_sizes.length;
@@ -25,12 +30,15 @@ public class NeuralNetwork {
 		expected = new float[layer_sizes[layer_sizes.length - 1]];
 
 		// create input layer
-		layers[0] = new Layer(layer_sizes[0], null);
+		layers[0] = new Layer(layer_sizes[0], null, "");
 
 		// create hidden layers
-		for (int i = 1; i < numLayers; i++) {
-			layers[i] = new Layer(layer_sizes[i], layers[i - 1]);
+		for (int i = 1; i < numLayers - 1; i++) {
+			layers[i] = new Layer(layer_sizes[i], layers[i - 1], hiddenActivationFunction);
 		}
+
+		// create output layer - will have different activaiton function than hidden layers
+		layers[numLayers - 1] = new Layer(layer_sizes[layer_sizes.length - 1], layers[layer_sizes.length - 1 - 1], "sigmoid");
 
 		//set up next layer pointers
 		for (int i = 0; i < numLayers - 1; i++) {
