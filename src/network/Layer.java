@@ -7,6 +7,8 @@ import math.MathUtils;
 
 public class Layer {
 
+	boolean isInputLayer;
+
 	float[] neurons; //activation of neurons
 	float[][] weights; //weights[i][j] = edge from previous layer neuron j to this layer neuron i
 	float[] bias;
@@ -19,14 +21,17 @@ public class Layer {
 
 	Layer previousLayer;
 	Layer nextLayer;
-	String activationFunction;
+	ActivationType activationType;
 
 	float cost;
 
+	public Layer(int nr_neurons, Layer prev_layer, ActivationType activation_type) {
+		assert prev_layer != null;
 
-	public Layer(int nr_neurons, Layer prev_layer) {
-
+		this.isInputLayer = false;
 		this.previousLayer = prev_layer;
+
+		this.activationType = activation_type;
 
 		bias = new float[nr_neurons];
 		nabla_b = new float[nr_neurons];
@@ -40,18 +45,13 @@ public class Layer {
 		nabla_z = new float[nr_neurons];
 		nabla_z_sum = new float[nr_neurons];
 
-		if (previousLayer != null) {
-			weights = new float[nr_neurons][previousLayer.getNrNeurons()];
-			nabla_w = new float[nr_neurons][previousLayer.getNrNeurons()];
-			nabla_w_sum = new float[nr_neurons][previousLayer.getNrNeurons()];
-		}
+		weights = new float[nr_neurons][previousLayer.getNrNeurons()];
+		nabla_w = new float[nr_neurons][previousLayer.getNrNeurons()];
+		nabla_w_sum = new float[nr_neurons][previousLayer.getNrNeurons()];
 	}
 
-	public Layer(int nr_neurons, Layer prev_layer, String activationFunction) {
-
-		this.previousLayer = prev_layer;
-
-		this.activationFunction = activationFunction;
+	public Layer(int nr_neurons) {
+		this.isInputLayer = true;
 
 		bias = new float[nr_neurons];
 		nabla_b = new float[nr_neurons];
@@ -64,12 +64,6 @@ public class Layer {
 		z = new float[nr_neurons];
 		nabla_z = new float[nr_neurons];
 		nabla_z_sum = new float[nr_neurons];
-
-		if (previousLayer != null) {
-			weights = new float[nr_neurons][previousLayer.getNrNeurons()];
-			nabla_w = new float[nr_neurons][previousLayer.getNrNeurons()];
-			nabla_w_sum = new float[nr_neurons][previousLayer.getNrNeurons()];
-		}
 	}
 
 	public void setNextLayer(Layer l) {
@@ -91,7 +85,13 @@ public class Layer {
 
 		//initialize biases
 		for (int i = 0; i < this.bias.length; i++) {
-			this.bias[i] = 0;
+			if (this.activationType == ActivationType.RELU) {
+				this.bias[i] = 0.01f;
+			}
+			else {
+				this.bias[i] = 0;
+			}
+
 		}
 	}
 
@@ -103,7 +103,7 @@ public class Layer {
 	 * take in stuff from previous layer and recompute neuron activations. 
 	 */
 	public void forwardPropagate(float[] expected) {
-		assert this.previousLayer != null;
+		assert !this.isInputLayer : "cannot forward propagate input layer";
 
 		//reset neurons
 		for (int i = 0; i < this.neurons.length; i++) {
@@ -143,6 +143,8 @@ public class Layer {
 	 * take in stuff from next layer, and compute weight increments. 
 	 */
 	public void backPropagate(float[] expected) {
+		assert !this.isInputLayer : "cannot back propagate input layer";
+
 		//reset all derivatives
 		for (int i = 0; i < this.nabla_a.length; i++) {
 			this.nabla_a[i] = 0;
@@ -188,12 +190,10 @@ public class Layer {
 		}
 
 		//compute nabla_w
-		if (this.previousLayer != null) {
-			for (int i = 0; i < this.neurons.length; i++) {
-				for (int j = 0; j < this.previousLayer.neurons.length; j++) {
-					float prev_a = this.previousLayer.neurons[j];
-					this.nabla_w[i][j] = prev_a * this.nabla_z[i];
-				}
+		for (int i = 0; i < this.neurons.length; i++) {
+			for (int j = 0; j < this.previousLayer.neurons.length; j++) {
+				float prev_a = this.previousLayer.neurons[j];
+				this.nabla_w[i][j] = prev_a * this.nabla_z[i];
 			}
 		}
 
@@ -207,16 +207,15 @@ public class Layer {
 		for (int i = 0; i < this.nabla_b.length; i++) {
 			this.nabla_b_sum[i] += this.nabla_b[i];
 		}
-		if (this.previousLayer != null) {
-			for (int i = 0; i < this.nabla_w.length; i++) {
-				for (int j = 0; j < this.nabla_w[i].length; j++) {
-					this.nabla_w_sum[i][j] += this.nabla_w[i][j];
-				}
+		for (int i = 0; i < this.nabla_w.length; i++) {
+			for (int j = 0; j < this.nabla_w[i].length; j++) {
+				this.nabla_w_sum[i][j] += this.nabla_w[i][j];
 			}
 		}
 	}
 
 	public void applyGradients(int batch_size, float learning_rate) {
+		assert !this.isInputLayer : "cannot apply gradients on input layer";
 		learning_rate /= batch_size;
 
 		//apply to bias
@@ -225,11 +224,9 @@ public class Layer {
 		}
 
 		//apply to weights
-		if (this.previousLayer != null) {
-			for (int i = 0; i < this.weights.length; i++) {
-				for (int j = 0; j < this.weights[i].length; j++) {
-					this.weights[i][j] -= this.nabla_w_sum[i][j] * learning_rate;
-				}
+		for (int i = 0; i < this.weights.length; i++) {
+			for (int j = 0; j < this.weights[i].length; j++) {
+				this.weights[i][j] -= this.nabla_w_sum[i][j] * learning_rate;
 			}
 		}
 
@@ -243,38 +240,35 @@ public class Layer {
 		for (int i = 0; i < this.nabla_b_sum.length; i++) {
 			this.nabla_b_sum[i] = 0;
 		}
-		if (this.previousLayer != null) {
-			for (int i = 0; i < this.nabla_w_sum.length; i++) {
-				for (int j = 0; j < this.nabla_w_sum[i].length; j++) {
-					this.nabla_w_sum[i][j] = 0;
-				}
+		for (int i = 0; i < this.nabla_w_sum.length; i++) {
+			for (int j = 0; j < this.nabla_w_sum[i].length; j++) {
+				this.nabla_w_sum[i][j] = 0;
 			}
 		}
 	}
 
 	private float activation_function(double val) {
-
-		if (activationFunction.equals("sigmoid")) {
-			return MathUtils.sigmoid(val);
-		} else if (activationFunction.equals("reLU")) {
+		switch (this.activationType) {
+		case RELU:
 			return MathUtils.reLU(val);
+		case SIGMOID:
+			return MathUtils.sigmoid(val);
+		default:
+			assert false : "unaccounted for activation function";
 		}
-
-		assert false : "incorrect activation function";
-		return 0.0f;
-
+		return 0f;
 	}
 
 	private float derivative_activation_function(double val) {
-
-		if (activationFunction.equals("sigmoid")) {
-			return MathUtils.derivative_sigmoid(val);
-		} else if (activationFunction.equals("reLU")) {
+		switch (this.activationType) {
+		case RELU:
 			return MathUtils.derivative_reLU(val);
+		case SIGMOID:
+			return MathUtils.derivative_sigmoid(val);
+		default:
+			assert false : "unaccounted for activation function";
 		}
-
-		assert false : "incorrect activation function";
-		return 0.0f;
+		return 0f;
 	}
 
 }

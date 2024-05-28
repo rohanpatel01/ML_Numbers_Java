@@ -7,13 +7,14 @@ import input.InputArray;
 import input.MnistDataReader;
 import input.MnistMatrix;
 import input.TestCase;
+import network.ActivationType;
 import network.NeuralNetwork;
 import plotting.ScatterPlot;
 
 public class Main {
 
 	public static void main(String[] args) {
-//		runXOR();
+		//		runXOR();
 		runMNIST();
 	}
 
@@ -24,8 +25,8 @@ public class Main {
 		int nr_batches = 10000;
 		float learning_rate = 0.01f;
 
-		int[] layer_sizes = { 2, 8, 1 };
-		NeuralNetwork network = new NeuralNetwork(layer_sizes, learning_rate * batch_size, "sigmoid");
+		int[] layer_sizes = { 2, 4, 1 };
+		NeuralNetwork network = new NeuralNetwork(layer_sizes, learning_rate * batch_size, ActivationType.RELU);
 
 		TestCase[] data = new TestCase[4];
 		data[0] = new InputArray(new float[] { 0, 0 }, new float[] { 0 });
@@ -64,7 +65,7 @@ public class Main {
 		ScatterPlot plot = new ScatterPlot("training mnist", "costs");
 		int batch_size = 100;
 		int nr_batches = 10000;
-		float learning_rate = 0.01f;
+		float learning_rate = 0.002f;
 
 		File trainingLabelFile = new File("src/samples/training/train-labels-idx1-ubyte");
 		File trainingImageFile = new File("src/samples/training/train-images-idx3-ubyte");
@@ -81,7 +82,7 @@ public class Main {
 
 		int input_size = mn[0].getInputSize();
 		int[] layer_sizes = { input_size, 64, 32, 10 };
-		NeuralNetwork network = new NeuralNetwork(layer_sizes, learning_rate * batch_size, "reLU");
+		NeuralNetwork network = new NeuralNetwork(layer_sizes, learning_rate * batch_size, ActivationType.RELU);
 
 		System.out.println(" -- TRAINING START -- ");
 		for (int i = 0; i < nr_batches; i++) {

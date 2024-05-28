@@ -15,14 +15,9 @@ public class NeuralNetwork {
 	private float learningRate;
 	private TestCase data;
 	private int batchSize;
-	private String hiddenActivationFunction;
 
-	public NeuralNetwork(int[] layer_sizes, float learningRate, String hiddenActivationFunction) {
-
+	public NeuralNetwork(int[] layer_sizes, float learningRate, ActivationType hidden_layer_type) {
 		assert layer_sizes.length >= 2;
-		assert hiddenActivationFunction.equals("sigmoid") || hiddenActivationFunction.equals("reLU");
-
-		this.hiddenActivationFunction = hiddenActivationFunction;
 
 		this.learningRate = learningRate;
 		numLayers = layer_sizes.length;
@@ -30,15 +25,15 @@ public class NeuralNetwork {
 		expected = new float[layer_sizes[layer_sizes.length - 1]];
 
 		// create input layer
-		layers[0] = new Layer(layer_sizes[0], null);
+		layers[0] = new Layer(layer_sizes[0]);
 
 		// create hidden layers
 		for (int i = 1; i < numLayers - 1; i++) {
-			layers[i] = new Layer(layer_sizes[i], layers[i - 1], hiddenActivationFunction);
+			layers[i] = new Layer(layer_sizes[i], layers[i - 1], hidden_layer_type);
 		}
 
-		// create output layer - will have different activaiton function than hidden layers
-		layers[numLayers - 1] = new Layer(layer_sizes[layer_sizes.length - 1], layers[layer_sizes.length - 1 - 1], "sigmoid");
+		// create output layer - will have different activation function than hidden layers
+		layers[numLayers - 1] = new Layer(layer_sizes[layer_sizes.length - 1], layers[layer_sizes.length - 1 - 1], ActivationType.SIGMOID);
 
 		//set up next layer pointers
 		for (int i = 0; i < numLayers - 1; i++) {
@@ -91,7 +86,7 @@ public class NeuralNetwork {
 
 	public void backPropagate() {
 		assert this.data != null;
-		for (int i = this.numLayers - 1; i > 0; i--) { // was >=
+		for (int i = this.numLayers - 1; i > 0; i--) {
 			this.layers[i].backPropagate(this.expected);
 		}
 		this.batchSize++;
@@ -113,7 +108,7 @@ public class NeuralNetwork {
 			return;
 		}
 
-		for (int i = 0; i < this.numLayers; i++) {
+		for (int i = 1; i < this.numLayers; i++) {
 			this.layers[i].applyGradients(this.batchSize, this.learningRate);
 		}
 
