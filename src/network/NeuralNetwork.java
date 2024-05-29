@@ -16,7 +16,7 @@ public class NeuralNetwork {
 	private TestCase data;
 	private int batchSize;
 
-	public NeuralNetwork(int[] layer_sizes, float learningRate, ActivationType hidden_layer_type) {
+	public NeuralNetwork(int[] layer_sizes, float learningRate, ActivationType hidden_layer_type, float input_layer_dropout_rate, float hidden_layer_dropout_rate) {
 		assert layer_sizes.length >= 2;
 
 		this.learningRate = learningRate;
@@ -25,15 +25,15 @@ public class NeuralNetwork {
 		expected = new float[layer_sizes[layer_sizes.length - 1]];
 
 		// create input layer
-		layers[0] = new Layer(layer_sizes[0]);
+		layers[0] = new Layer(layer_sizes[0], input_layer_dropout_rate);
 
 		// create hidden layers
 		for (int i = 1; i < numLayers - 1; i++) {
-			layers[i] = new Layer(layer_sizes[i], layers[i - 1], hidden_layer_type);
+			layers[i] = new Layer(layer_sizes[i], layers[i - 1], hidden_layer_type, hidden_layer_dropout_rate);
 		}
 
-		// create output layer - will have different activation function than hidden layers
-		layers[numLayers - 1] = new Layer(layer_sizes[layer_sizes.length - 1], layers[layer_sizes.length - 1 - 1], ActivationType.SIGMOID);
+		// create output layer - will have different activation function than hidden layers - will not drop out neurons in output layer
+		layers[numLayers - 1] = new Layer(layer_sizes[layer_sizes.length - 1], layers[layer_sizes.length - 1 - 1], ActivationType.SIGMOID, 1);
 
 		//set up next layer pointers
 		for (int i = 0; i < numLayers - 1; i++) {
@@ -113,6 +113,24 @@ public class NeuralNetwork {
 		}
 
 		this.batchSize = 0;
+	}
+
+	/**
+	 * Populate the dropout mask for each layer
+	 */
+	public void generate_dropout_mask() {
+		for (int i = 0; i < this.numLayers; i++) {
+			this.layers[i].generate_dropout_mask();
+		}
+	}
+
+	/**
+	 * Set dropout mask to 1 for testing
+	 */
+	public void set_dropout_mask_inference() {
+		for (int i = 0; i < this.numLayers; i++) {
+			this.layers[i].set_dropout_mask_inference();
+		}
 	}
 
 	public void print_layers() {

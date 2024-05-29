@@ -5,6 +5,8 @@ import static java.lang.Math.sqrt;
 
 import math.MathUtils;
 
+import java.util.Random;
+
 public class Layer {
 
 	boolean isInputLayer;
@@ -13,6 +15,7 @@ public class Layer {
 	float[][] weights; //weights[i][j] = edge from previous layer neuron j to this layer neuron i
 	float[] bias;
 	float[] z; //weighted input sum
+	int[] dropoutMask;
 	float[] nabla_a, nabla_b, nabla_z;
 	float[][] nabla_w;
 
@@ -22,16 +25,18 @@ public class Layer {
 	Layer previousLayer;
 	Layer nextLayer;
 	ActivationType activationType;
+	float dropoutProbability;
 
 	float cost;
 
-	public Layer(int nr_neurons, Layer prev_layer, ActivationType activation_type) {
+	public Layer(int nr_neurons, Layer prev_layer, ActivationType activation_type, float dropoutProbability) {
 		assert prev_layer != null;
 
 		this.isInputLayer = false;
 		this.previousLayer = prev_layer;
 
 		this.activationType = activation_type;
+		this.dropoutProbability = dropoutProbability;
 
 		bias = new float[nr_neurons];
 		nabla_b = new float[nr_neurons];
@@ -45,12 +50,14 @@ public class Layer {
 		nabla_z = new float[nr_neurons];
 		nabla_z_sum = new float[nr_neurons];
 
+		dropoutMask = new int[nr_neurons];
+
 		weights = new float[nr_neurons][previousLayer.getNrNeurons()];
 		nabla_w = new float[nr_neurons][previousLayer.getNrNeurons()];
 		nabla_w_sum = new float[nr_neurons][previousLayer.getNrNeurons()];
 	}
 
-	public Layer(int nr_neurons) {
+	public Layer(int nr_neurons, float dropoutProbability) {
 		this.isInputLayer = true;
 
 		bias = new float[nr_neurons];
@@ -62,8 +69,11 @@ public class Layer {
 		nabla_a_sum = new float[nr_neurons];
 
 		z = new float[nr_neurons];
+		dropoutMask = new int[nr_neurons];
 		nabla_z = new float[nr_neurons];
 		nabla_z_sum = new float[nr_neurons];
+
+		this.dropoutProbability = dropoutProbability;
 	}
 
 	public void setNextLayer(Layer l) {
@@ -92,6 +102,11 @@ public class Layer {
 				this.bias[i] = 0;
 			}
 
+		}
+
+		//initialize dropout mask
+		for (int i = 0; i < this.dropoutMask.length; i++) {
+			this.dropoutMask[i] = 1;
 		}
 	}
 
@@ -124,9 +139,17 @@ public class Layer {
 			this.z[i] += this.bias[i];
 		}
 
-		//apply sigmoid
+		//apply activation function
 		for (int i = 0; i < this.neurons.length; i++) {
-			this.neurons[i] = activation_function(this.z[i]); // was sigmoid
+			this.neurons[i] = activation_function(this.z[i]);
+		}
+
+		//apply inverse dropout and scale activation values for retained neurons
+		if (this.nextLayer != null) {
+			for (int i = 0; i < this.neurons.length; i++) {
+				this.neurons[i] *= this.dropoutMask[i];
+				this.neurons[i] *= (1 / (1 - dropoutProbability));
+			}
 		}
 
 		//if this is the last layer, compute the cost
@@ -244,6 +267,32 @@ public class Layer {
 			for (int j = 0; j < this.nabla_w_sum[i].length; j++) {
 				this.nabla_w_sum[i][j] = 0;
 			}
+		}
+	}
+
+
+	public void generate_dropout_mask() {
+
+		// keep dropout mask for output layer as 1 (i.e. do not drop out output layer neurons)
+		if (this.nextLayer == null) { return; }
+
+		Random rand = new Random();
+		for (int i = 0; i < this.dropoutMask.length; i++) {
+
+			boolean isDropped = rand.nextDouble() < this.dropoutProbability;
+
+			if (isDropped) {
+				dropoutMask[i] = 0;
+			} else {
+				dropoutMask[i] = 1;
+			}
+		}
+	}
+
+
+	public void set_dropout_mask_inference() {
+		for (int i = 0; i < this.dropoutMask.length; i++) {
+			this.dropoutMask[i] = 1;
 		}
 	}
 

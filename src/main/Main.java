@@ -14,7 +14,7 @@ import plotting.ScatterPlot;
 public class Main {
 
 	public static void main(String[] args) {
-		//		runXOR();
+//				runXOR();
 		runMNIST();
 	}
 
@@ -26,7 +26,7 @@ public class Main {
 		float learning_rate = 0.01f;
 
 		int[] layer_sizes = { 2, 4, 1 };
-		NeuralNetwork network = new NeuralNetwork(layer_sizes, learning_rate * batch_size, ActivationType.RELU);
+		NeuralNetwork network = new NeuralNetwork(layer_sizes, learning_rate * batch_size, ActivationType.RELU, 0.2f, 0.5f);
 
 		TestCase[] data = new TestCase[4];
 		data[0] = new InputArray(new float[] { 0, 0 }, new float[] { 0 });
@@ -50,6 +50,7 @@ public class Main {
 			}
 		}
 
+		System.out.println(" -- TESTING START -- ");
 		for (int i = 0; i < 4; i++) {
 			network.feedData(data[i]);
 			network.forwardPropagate();
@@ -82,11 +83,12 @@ public class Main {
 
 		int input_size = mn[0].getInputSize();
 		int[] layer_sizes = { input_size, 64, 32, 10 };
-		NeuralNetwork network = new NeuralNetwork(layer_sizes, learning_rate * batch_size, ActivationType.RELU);
+		NeuralNetwork network = new NeuralNetwork(layer_sizes, learning_rate * batch_size, ActivationType.RELU, 0.2f, 0.5f);
 
 		System.out.println(" -- TRAINING START -- ");
 		for (int i = 0; i < nr_batches; i++) {
 			float avg_cost = 0;
+			network.generate_dropout_mask();
 			for (int j = 0; j < batch_size; j++) {
 				int next_tc = (int) (Math.random() * mn.length);
 				network.feedData(mn[next_tc]);
@@ -116,6 +118,7 @@ public class Main {
 		}
 
 		System.out.println(" -- TESTING START -- ");
+		network.set_dropout_mask_inference(); // NOTE: Must set dropout mask to inference mode when testing
 		for (int i = 0; i < mn.length; i++) {
 			network.feedData(mn[i]);
 			network.forwardPropagate();
