@@ -64,7 +64,7 @@ public class Main {
 
 	public static void runMNIST() {
 		ScatterPlot plot = new ScatterPlot("training mnist", "costs");
-		int batch_size = 100;
+		int batch_size = 256;
 		int nr_batches = 10000;
 		float learning_rate = 0.002f;
 
@@ -82,10 +82,12 @@ public class Main {
 		}
 
 		int input_size = mn[0].getInputSize();
-		int[] layer_sizes = { input_size, 64, 32, 10 };
+		int[] layer_sizes = { input_size, 128, 64, 10 };
 		NeuralNetwork network = new NeuralNetwork(layer_sizes, learning_rate * batch_size, ActivationType.RELU, 0.2f, 0.5f);
 
 		System.out.println(" -- TRAINING START -- ");
+		long startTime = System.currentTimeMillis();
+
 		for (int i = 0; i < nr_batches; i++) {
 			float avg_cost = 0;
 			network.generate_dropout_mask();
@@ -103,7 +105,10 @@ public class Main {
 				plot.addData(i, avg_cost);
 			}
 		}
+		long endTime = System.currentTimeMillis();
 		System.out.println(" -- TRAINING DONE -- ");
+		System.out.println("TRAINING TIME: " + (endTime - startTime) / 1000.0 + " seconds");
+
 
 		File testingLabelFile = new File("src/samples/testing/t10k-labels-idx1-ubyte");
 		File testingImageFile = new File("src/samples/testing/t10k-images-idx3-ubyte");

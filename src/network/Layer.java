@@ -26,6 +26,7 @@ public class Layer {
 	Layer nextLayer;
 	ActivationType activationType;
 	float dropoutProbability;
+	float dropoutScale;
 
 	float cost;
 
@@ -37,6 +38,7 @@ public class Layer {
 
 		this.activationType = activation_type;
 		this.dropoutProbability = dropoutProbability;
+		this.dropoutScale = (1 / (1 - dropoutProbability));
 
 		bias = new float[nr_neurons];
 		nabla_b = new float[nr_neurons];
@@ -74,6 +76,7 @@ public class Layer {
 		nabla_z_sum = new float[nr_neurons];
 
 		this.dropoutProbability = dropoutProbability;
+		this.dropoutScale = (1 / (1 - dropoutProbability));
 	}
 
 	public void setNextLayer(Layer l) {
@@ -147,8 +150,7 @@ public class Layer {
 		//apply inverse dropout and scale activation values for retained neurons
 		if (this.nextLayer != null) {
 			for (int i = 0; i < this.neurons.length; i++) {
-				this.neurons[i] *= this.dropoutMask[i];
-				this.neurons[i] *= (1 / (1 - dropoutProbability));
+				this.neurons[i] *= this.dropoutMask[i] * this.dropoutScale;
 			}
 		}
 
@@ -197,14 +199,15 @@ public class Layer {
 		else {
 			for (int i = 0; i < this.neurons.length; i++) {
 				for (int j = 0; j < this.nextLayer.neurons.length; j++) {
-					this.nabla_a[i] += this.nextLayer.weights[j][i] * this.nextLayer.nabla_z[j];
+					//apply dropout mask and scale to gradient
+					this.nabla_a[i] += this.nextLayer.weights[j][i] * this.nextLayer.nabla_z[j] * this.dropoutMask[i] * this.dropoutScale;
 				}
 			}
 		}
 
 		//compute nabla_z
 		for (int i = 0; i < this.neurons.length; i++) {
-			this.nabla_z[i] = derivative_activation_function(this.z[i]) * this.nabla_a[i]; // was derivative sigmoid
+			this.nabla_z[i] = derivative_activation_function(this.z[i]) * this.nabla_a[i];
 		}
 
 		//compute nabla_b
