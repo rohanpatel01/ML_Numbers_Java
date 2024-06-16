@@ -10,6 +10,7 @@ import java.util.Random;
 public class Layer {
 
 	boolean isInputLayer;
+	boolean dropoutEnabled;
 
 	float[] neurons; //activation of neurons
 	float[][] weights; //weights[i][j] = edge from previous layer neuron j to this layer neuron i
@@ -34,33 +35,62 @@ public class Layer {
 		assert prev_layer != null;
 
 		this.isInputLayer = false;
+		this.dropoutEnabled= true;
 		this.previousLayer = prev_layer;
 
 		this.activationType = activation_type;
+
 		this.dropoutProbability = dropoutProbability;
 		this.dropoutScale = (1 / (1 - dropoutProbability));
-
-		bias = new float[nr_neurons];
-		nabla_b = new float[nr_neurons];
-		nabla_b_sum = new float[nr_neurons];
-
-		neurons = new float[nr_neurons];
-		nabla_a = new float[nr_neurons];
-		nabla_a_sum = new float[nr_neurons];
-
-		z = new float[nr_neurons];
-		nabla_z = new float[nr_neurons];
-		nabla_z_sum = new float[nr_neurons];
-
 		dropoutMask = new int[nr_neurons];
 
 		weights = new float[nr_neurons][previousLayer.getNrNeurons()];
 		nabla_w = new float[nr_neurons][previousLayer.getNrNeurons()];
 		nabla_w_sum = new float[nr_neurons][previousLayer.getNrNeurons()];
+
+		//initialize dropout mask
+		for (int i = 0; i < this.dropoutMask.length; i++) {
+			this.dropoutMask[i] = 1;
+		}
+		generalConstructor(nr_neurons);
+	}
+
+	public Layer(int nr_neurons, Layer prev_layer, ActivationType activation_type) {
+		assert prev_layer != null;
+
+		this.isInputLayer = false;
+		this.dropoutEnabled = false;
+		this.previousLayer = prev_layer;
+
+		this.activationType = activation_type;
+
+		weights = new float[nr_neurons][previousLayer.getNrNeurons()];
+		nabla_w = new float[nr_neurons][previousLayer.getNrNeurons()];
+		nabla_w_sum = new float[nr_neurons][previousLayer.getNrNeurons()];
+
+		generalConstructor(nr_neurons);
 	}
 
 	public Layer(int nr_neurons, float dropoutProbability) {
 		this.isInputLayer = true;
+		dropoutMask = new int[nr_neurons];
+		this.dropoutProbability = dropoutProbability;
+		this.dropoutScale = (1 / (1 - dropoutProbability));
+
+
+		//initialize dropout mask
+		for (int i = 0; i < this.dropoutMask.length; i++) {
+			this.dropoutMask[i] = 1;
+		}
+		generalConstructor(nr_neurons);
+	}
+
+	public Layer(int nr_neurons) {
+		this.isInputLayer = true;
+		generalConstructor(nr_neurons);
+	}
+
+	private void generalConstructor(int nr_neurons) {
 
 		bias = new float[nr_neurons];
 		nabla_b = new float[nr_neurons];
@@ -71,16 +101,21 @@ public class Layer {
 		nabla_a_sum = new float[nr_neurons];
 
 		z = new float[nr_neurons];
-		dropoutMask = new int[nr_neurons];
 		nabla_z = new float[nr_neurons];
 		nabla_z_sum = new float[nr_neurons];
 
-		this.dropoutProbability = dropoutProbability;
-		this.dropoutScale = (1 / (1 - dropoutProbability));
+//		//initialize dropout mask
+//		for (int i = 0; i < this.dropoutMask.length; i++) {
+//			this.dropoutMask[i] = 1;
+//		}
 	}
 
 	public void setNextLayer(Layer l) {
 		this.nextLayer = l;
+	}
+
+	public void setDropoutEnabled() {
+		this.dropoutEnabled= true;
 	}
 
 	public void initialize() {
@@ -107,10 +142,7 @@ public class Layer {
 
 		}
 
-		//initialize dropout mask
-		for (int i = 0; i < this.dropoutMask.length; i++) {
-			this.dropoutMask[i] = 1;
-		}
+
 	}
 
 	public int getNrNeurons() {
@@ -148,7 +180,7 @@ public class Layer {
 		}
 
 		//apply inverse dropout and scale activation values for retained neurons
-		if (this.nextLayer != null) {
+		if (this.nextLayer != null && this.dropoutEnabled) {
 			for (int i = 0; i < this.neurons.length; i++) {
 				this.neurons[i] *= this.dropoutMask[i] * this.dropoutScale;
 			}
@@ -200,7 +232,14 @@ public class Layer {
 			for (int i = 0; i < this.neurons.length; i++) {
 				for (int j = 0; j < this.nextLayer.neurons.length; j++) {
 					//apply dropout mask and scale to gradient
-					this.nabla_a[i] += this.nextLayer.weights[j][i] * this.nextLayer.nabla_z[j] * this.dropoutMask[i] * this.dropoutScale;
+					float nabla_a = this.nextLayer.weights[j][i] * this.nextLayer.nabla_z[j];
+
+					if (this.dropoutEnabled) {
+						this.nabla_a[i] += nabla_a * this.dropoutMask[i] * this.dropoutScale;
+					} else {
+						this.nabla_a[i] += nabla_a; // * this.dropoutMask[i] * this.dropoutScale
+					}
+
 				}
 			}
 		}

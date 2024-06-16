@@ -16,6 +16,48 @@ public class NeuralNetwork {
 	private TestCase data;
 	private int batchSize;
 
+	/**
+	 * Default neural network constructor that does not support inverse dropout
+	 * @param layer_sizes
+	 * @param learningRate
+	 * @param hidden_layer_type
+	 */
+	public NeuralNetwork(int[] layer_sizes, float learningRate, ActivationType hidden_layer_type) {
+		assert layer_sizes.length >= 2;
+
+		this.learningRate = learningRate;
+		numLayers = layer_sizes.length;
+		layers = new Layer[numLayers];
+		expected = new float[layer_sizes[layer_sizes.length - 1]];
+
+		// create input layer
+		layers[0] = new Layer(layer_sizes[0]);
+
+		// create hidden layers
+		for (int i = 1; i < numLayers - 1; i++) {
+			layers[i] = new Layer(layer_sizes[i], layers[i - 1], hidden_layer_type);
+		}
+
+		// create output layer - will have different activation function than hidden layers - will not drop out neurons in output layer
+		layers[numLayers - 1] = new Layer(layer_sizes[layer_sizes.length - 1], layers[layer_sizes.length - 1 - 1], ActivationType.SIGMOID);
+
+		//set up next layer pointers
+		for (int i = 0; i < numLayers - 1; i++) {
+			layers[i].setNextLayer(layers[i + 1]);
+		}
+
+		// initialize weights
+		this.initialize();
+	}
+
+	/**
+	 * Additional constructor that supports inverse dropout
+ 	 * @param layer_sizes
+	 * @param learningRate
+	 * @param hidden_layer_type
+	 * @param input_layer_dropout_rate
+	 * @param hidden_layer_dropout_rate
+	 */
 	public NeuralNetwork(int[] layer_sizes, float learningRate, ActivationType hidden_layer_type, float input_layer_dropout_rate, float hidden_layer_dropout_rate) {
 		assert layer_sizes.length >= 2;
 
@@ -38,6 +80,11 @@ public class NeuralNetwork {
 		//set up next layer pointers
 		for (int i = 0; i < numLayers - 1; i++) {
 			layers[i].setNextLayer(layers[i + 1]);
+		}
+
+		//enable dropout for layers
+		for (int i = 0; i < numLayers; i++) {
+			layers[i].setDropoutEnabled();
 		}
 
 		// initialize weights
