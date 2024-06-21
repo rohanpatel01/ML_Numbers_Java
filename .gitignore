@@ -27,3 +27,6 @@ bin/
 
 ### Mac OS ###
 .DS_Store
+
+#these testing files are too big D:
+/src/samples/quick_draw/testing/

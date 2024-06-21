@@ -3,6 +3,7 @@ import subprocess
 import shutil
 import numpy as np
 import random;
+import gc;
 
 # print(os.getcwd())
 # print(os.path.dirname(os.path.realpath(__file__)))
@@ -30,18 +31,17 @@ def extractTestData(cat, n):
     runCmd([gsutil_path, "-m", "cp", "-r", createGSPath(cat), "."])
     filename = cat + ".npy"
 
-    #extract n testcases
-    cases = []
+    #extract n testcases randomly
     data = np.load(filename)
-    #for now, just take the first n testcases
-    for i in range(0, n):
-        cases.append(data[i])
-    # print("data shape :", data.shape)
-    # print("data type :", data.dtype)
-    # print("contents :", data)
+    random.shuffle(data)
+    cases = data[:n].tolist()
+
+    #make sure to release memory
+    del data
 
     #we're done, delete the file
     os.remove(filename)
+    gc.collect()
 
     return cases
 
@@ -52,9 +52,9 @@ with open("quick_draw_categories.txt", "r") as file:
         categories.append(line.strip())
 
 #for each category, randomly extract some test data
-N = 50
+N = 2000
 test_data = []
-for i in range(10):
+for i in range(len(categories)):
     c_test_data = extractTestData(categories[i], N)
     for _ in c_test_data:
         test_data.append([i, _])
@@ -63,12 +63,11 @@ for i in range(10):
 random.shuffle(test_data)
 
 #write test data into text file
-filename = "quick_draw_" + str(N) + "ea.txt"
-with open(filename, "w") as file:
+filepath = "testing/quick_draw_" + str(N) + "ea.txt"
+with open(filepath, "w") as file:
     for i in range(len(test_data)):
         file.write(str(test_data[i][0]) + " ")
         for j in range(28 * 28):
             file.write(str(test_data[i][1][j]) + " ")
-            file.write
         file.write("\n")
 

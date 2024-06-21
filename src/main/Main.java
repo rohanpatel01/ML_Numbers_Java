@@ -14,7 +14,7 @@ import plotting.ScatterPlot;
 public class Main {
 
 	public static void main(String[] args) {
-//				runXOR();
+		//				runXOR();
 		runMNIST();
 	}
 
@@ -68,8 +68,8 @@ public class Main {
 		int nr_batches = 10000;
 		float learning_rate = 0.002f;
 
-		File trainingLabelFile = new File("src/samples/training/train-labels-idx1-ubyte");
-		File trainingImageFile = new File("src/samples/training/train-images-idx3-ubyte");
+		File trainingLabelFile = new File("src/samples/mnist/training/train-labels-idx1-ubyte");
+		File trainingImageFile = new File("src/samples/mnist/training/train-images-idx3-ubyte");
 
 		MnistDataReader mnReader = new MnistDataReader();
 		MnistMatrix[] mn;
@@ -109,9 +109,8 @@ public class Main {
 		System.out.println(" -- TRAINING DONE -- ");
 		System.out.println("TRAINING TIME: " + (endTime - startTime) / 1000.0 + " seconds");
 
-
-		File testingLabelFile = new File("src/samples/testing/t10k-labels-idx1-ubyte");
-		File testingImageFile = new File("src/samples/testing/t10k-images-idx3-ubyte");
+		File testingLabelFile = new File("src/samples/mnist/testing/t10k-labels-idx1-ubyte");
+		File testingImageFile = new File("src/samples/mnist/testing/t10k-images-idx3-ubyte");
 
 		int nr_correct = 0;
 
