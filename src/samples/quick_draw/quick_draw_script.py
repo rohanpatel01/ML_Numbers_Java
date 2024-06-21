@@ -8,7 +8,7 @@ import gc;
 # print(os.getcwd())
 # print(os.path.dirname(os.path.realpath(__file__)))
 
-#this script should download np bitmap files for each category, and randomly sample 10k of them to be used for training. 
+#this script should download np bitmap files for each category, and randomly sample them to be used for training. 
 #testcases are stored in 2D array where each row is a 28x28 testcase
 
 def createGSPath(cat):
@@ -52,7 +52,7 @@ with open("quick_draw_categories.txt", "r") as file:
         categories.append(line.strip())
 
 #for each category, randomly extract some test data
-N = 2000
+N = 1000
 test_data = []
 for i in range(len(categories)):
     c_test_data = extractTestData(categories[i], N)
@@ -65,6 +65,7 @@ random.shuffle(test_data)
 #write test data into text file
 filepath = "testing/quick_draw_" + str(N) + "ea.txt"
 with open(filepath, "w") as file:
+    file.write(str(len(test_data)) + "\n")
     for i in range(len(test_data)):
         file.write(str(test_data[i][0]) + " ")
         for j in range(28 * 28):
